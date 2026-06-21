@@ -131,9 +131,10 @@
   }
 
   function normalizeHttpUrl(value) {
+    const candidate = coerceHttpUrlInput(value);
     let parsed;
     try {
-      parsed = new URL(value);
+      parsed = new URL(candidate);
     } catch (_error) {
       throw new Error("Theme URL must be a valid http or https URL.");
     }
@@ -141,6 +142,17 @@
       throw new Error("Theme URL must use http or https.");
     }
     return parsed.href;
+  }
+
+  function coerceHttpUrlInput(value) {
+    const trimmed = typeof value === "string" ? value.trim() : "";
+    if (/^https?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+    if (/^[a-z0-9.-]+\.[a-z]{2,}(?:[/?#].*)?$/i.test(trimmed)) {
+      return "https://" + trimmed;
+    }
+    return trimmed;
   }
 
   function extractThemeText(html, url) {

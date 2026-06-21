@@ -355,7 +355,18 @@
   }
 
   function normalizeThemeUrlInput(value) {
-    return typeof value === "string" ? value.trim() : "";
+    const trimmed = typeof value === "string" ? value.trim() : "";
+    if (!trimmed) {
+      return "";
+    }
+    if (themeUrlExtractor && typeof themeUrlExtractor.normalizeHttpUrl === "function") {
+      try {
+        return themeUrlExtractor.normalizeHttpUrl(trimmed);
+      } catch (_error) {
+        return trimmed;
+      }
+    }
+    return trimmed;
   }
 
   function renderFatalStartupError(error) {

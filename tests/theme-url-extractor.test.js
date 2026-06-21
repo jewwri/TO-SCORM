@@ -87,6 +87,15 @@ test("rejects non-http theme URLs", async () => {
   );
 });
 
+test("normalizes bare domains into https URLs", () => {
+  assert.equal(extractor.normalizeHttpUrl("southernct.edu"), "https://southernct.edu/");
+  assert.equal(extractor.normalizeHttpUrl("www.southernct.edu"), "https://www.southernct.edu/");
+  assert.equal(
+    extractor.normalizeHttpUrl("southernct.edu/about?x=1"),
+    "https://southernct.edu/about?x=1",
+  );
+});
+
 test("ranks non-neutral hex colors", () => {
   assert.deepEqual(
     extractor.extractRankedHexColors("#ffffff #000000 #123456 #123456 #abcdef"),
