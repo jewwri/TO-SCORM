@@ -458,25 +458,66 @@ textarea {
   min-height: 0;
   overflow: auto;
   padding: 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--course-theme-primary, #263640) 9%, transparent) 0 18%, transparent 18% 100%),
+    var(--course-theme-background, transparent);
 }
 
 .preview-header {
   padding: 18px;
-  border-left: 5px solid var(--color-primary);
+  border-left: 5px solid var(--course-theme-primary, var(--color-primary));
   border-radius: 8px;
-  background: #fff7db;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--course-theme-accent, #ffd24a) 22%, transparent), transparent 56%),
+    var(--course-theme-surface, #fff7db);
+  color: var(--course-theme-text, var(--color-ink));
+}
+
+.preview-header h2 {
+  color: var(--course-theme-primary, var(--color-primary-dark));
 }
 
 .preview-header p {
   margin: 0;
-  color: var(--color-muted);
+  color: color-mix(in srgb, var(--course-theme-text, #172033) 74%, white);
 }
 
 .preview-slide {
+  position: relative;
   padding: 20px;
   border: 1px solid var(--color-line);
+  border-top: 4px solid var(--course-theme-primary, var(--color-primary));
   border-radius: 8px;
-  background: white;
+  background: var(--course-theme-surface, white);
+  color: var(--course-theme-text, var(--color-ink));
+}
+
+.preview-slide::after {
+  position: absolute;
+  right: 16px;
+  top: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  content: "";
+  background:
+    linear-gradient(135deg, var(--course-theme-primary, var(--color-primary)) 0 50%, var(--course-theme-accent, var(--color-accent)) 50% 100%);
+  opacity: 0.16;
+}
+
+.theme-badge {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0 0 12px;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--course-theme-primary, var(--color-primary)) 30%, white);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--course-theme-accent, var(--color-accent)) 24%, white);
+  color: var(--course-theme-primary, var(--color-primary-dark));
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .preview-grid,
@@ -492,7 +533,7 @@ textarea {
   min-height: 116px;
   padding: 16px;
   border: 1px solid var(--color-line);
-  border-top: 4px solid var(--color-accent);
+  border-top: 4px solid var(--course-theme-accent, var(--color-accent));
   border-radius: 8px;
   background: #fffaf5;
 }
@@ -501,7 +542,7 @@ textarea {
 .tile strong {
   display: block;
   margin-bottom: 8px;
-  color: var(--color-primary-dark);
+  color: var(--course-theme-primary, var(--color-primary-dark));
   font-size: 17px;
 }
 
@@ -517,10 +558,10 @@ textarea {
 .checkpoint {
   margin-top: 18px;
   padding: 15px 16px;
-  border-left: 5px solid var(--color-primary);
+  border-left: 5px solid var(--course-theme-primary, var(--color-primary));
   border-radius: 8px;
-  background: #fff1ed;
-  color: #7c2418;
+  background: color-mix(in srgb, var(--course-theme-accent, var(--color-accent)) 20%, white);
+  color: var(--course-theme-text, #7c2418);
   font-size: 16px;
   line-height: 1.5;
 }
@@ -629,6 +670,53 @@ textarea {
   height: 100%;
   background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   transition: width 0.25s ease;
+}
+
+.course-runtime {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--course-theme-primary, #263640) 18%, transparent) 0 22%, transparent 22% 100%),
+    linear-gradient(180deg, var(--course-theme-background, var(--color-page)), var(--color-page));
+}
+
+.course-runtime .hero {
+  padding: 24px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, var(--course-theme-primary, var(--color-primary-dark)), color-mix(in srgb, var(--course-theme-primary, var(--color-primary-dark)) 70%, black)),
+    var(--course-theme-primary, var(--color-primary-dark));
+  color: white;
+  box-shadow: var(--shadow-panel);
+}
+
+.course-runtime .hero h1,
+.course-runtime .hero .eyebrow,
+.course-runtime .hero .subtitle,
+.course-runtime .hero #courseStatus,
+.course-runtime .hero #progressLabel {
+  color: white;
+}
+
+.course-runtime .progress {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.course-runtime #progressBar {
+  background: linear-gradient(90deg, var(--course-theme-accent, var(--color-accent)), white);
+}
+
+.course-runtime .card {
+  border-top: 5px solid var(--course-theme-primary, var(--color-primary));
+  background: var(--course-theme-surface, white);
+}
+
+.course-runtime h2,
+.course-runtime .tile strong,
+.course-runtime .result {
+  color: var(--course-theme-primary, var(--color-primary-dark));
+}
+
+.course-runtime li::marker {
+  color: var(--course-theme-accent, var(--color-accent));
 }
 
 .result {

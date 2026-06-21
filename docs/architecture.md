@@ -2,13 +2,13 @@
 
 ## System Purpose
 
-This repository contains a browser-based SCORM app. A user provides a topic, lesson theme, audience, objectives, timing, and quiz settings; the app generates an accessible microlearning preview and exports a SCORM 1.2 ZIP that can be uploaded to an LMS.
+This repository contains a browser-based SCORM app. A user provides a topic, visual theme, audience, objectives, timing, and quiz settings; the app generates an accessible microlearning preview and exports a SCORM 1.2 ZIP that can be uploaded to an LMS.
 
 ## Main Use Cases
 
 - Generate a draft lesson from explicit user inputs.
 - Preview generated slides and quiz questions directly in the app.
-- Iterate on topic, theme, objectives, duration, slide count, question count, and passing score.
+- Iterate on topic, visual theme, objectives, duration, slide count, question count, and passing score.
 - Export a SCORM 1.2 package with `imsmanifest.xml`, learner runtime assets, content, scoring, and LMS progress reporting.
 - Run unit, architecture, and package tests without external services.
 
@@ -51,6 +51,7 @@ flowchart LR
 - Slide: instructional content blocks or a quiz marker.
 - ContentBlock: paragraph, list, tile group, or callout.
 - Question: prompt, answer options, correct answer, and rationale.
+- ThemeProfile: generated visual palette and motif derived from user theme text.
 
 ## Major Workflows
 

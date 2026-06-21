@@ -40,6 +40,7 @@ test("export package replaces static content with the course the user built", ()
 
   assert.match(scormPackage.files["course-content.js"], /Forklift Safety/);
   assert.match(scormPackage.files["course-content.js"], /Inspect the route/);
+  assert.match(scormPackage.files["course-content.js"], /themeProfile/);
   assert.doesNotMatch(scormPackage.files["course-content.js"], /CI\/CD Foundations/);
 });
 

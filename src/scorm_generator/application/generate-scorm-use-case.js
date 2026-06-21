@@ -23,6 +23,7 @@
         slideCount: course.slides.length,
         questionCount: course.questions.length,
         passingScore: course.passingScore,
+        themeName: course.themeProfile.name,
       }),
     });
   }

@@ -1,6 +1,6 @@
 # SCORM
 
-Static SCORM 1.2 app for building short, accessible microlearning packages from a topic, lesson theme, learner audience, objectives, and quiz settings.
+Static SCORM 1.2 app for building short, accessible microlearning packages from a topic, visual theme, learner audience, objectives, and quiz settings.
 
 ## Run Locally
 
@@ -8,7 +8,7 @@ Static SCORM 1.2 app for building short, accessible microlearning packages from 
 make serve
 ```
 
-Open `http://localhost:8000`. The app generates a live lesson preview as fields change. Use `Export Built SCORM` to download the LMS-ready SCORM 1.2 package you built.
+Open `http://localhost:8000`. The app generates a live lesson preview as fields change, including visual styling from the theme field. Use `Export Built SCORM` to download the LMS-ready SCORM 1.2 package you built.
 
 ## Test
 

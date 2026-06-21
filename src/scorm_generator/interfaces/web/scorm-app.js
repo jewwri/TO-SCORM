@@ -109,6 +109,7 @@
       ["Slides", summary.slideCount],
       ["Questions", summary.questionCount],
       ["Passing score", summary.passingScore + "%"],
+      ["Theme", summary.themeName],
     ].forEach(([label, value]) => {
       const item = document.createElement("div");
       const term = document.createElement("dt");
@@ -122,9 +123,11 @@
 
   function renderPreview(course) {
     clearNode(elements.preview);
+    applyThemeToElement(elements.preview, course.themeProfile);
 
     const header = document.createElement("div");
     header.className = "preview-header";
+    header.dataset.motif = course.themeProfile.motif;
     const title = document.createElement("h2");
     title.textContent = course.title;
     const details = document.createElement("p");
@@ -137,12 +140,16 @@
       " questions | passing score " +
       course.passingScore +
       "%";
-    header.append(title, details);
+    const themeBadge = document.createElement("span");
+    themeBadge.className = "theme-badge";
+    themeBadge.textContent = course.themeProfile.name + " theme";
+    header.append(themeBadge, title, details);
     elements.preview.appendChild(header);
 
     course.slides.forEach((slide, index) => {
       const article = document.createElement("article");
       article.className = "preview-slide";
+      article.dataset.motif = course.themeProfile.motif;
       article.setAttribute("aria-labelledby", "preview-slide-" + index);
 
       const slideTitle = document.createElement("h3");
@@ -162,6 +169,23 @@
     logger.info("preview_rendered", {
       courseId: course.courseId,
       slideCount: course.slides.length,
+    });
+  }
+
+  function applyThemeToElement(element, themeProfile) {
+    if (!themeProfile || !themeProfile.colors) {
+      element.removeAttribute("data-theme-motif");
+      return;
+    }
+    element.dataset.themeMotif = themeProfile.motif;
+    Object.entries({
+      "--course-theme-primary": themeProfile.colors.primary,
+      "--course-theme-accent": themeProfile.colors.accent,
+      "--course-theme-background": themeProfile.colors.background,
+      "--course-theme-surface": themeProfile.colors.surface,
+      "--course-theme-text": themeProfile.colors.text,
+    }).forEach(([property, value]) => {
+      element.style.setProperty(property, value);
     });
   }
 

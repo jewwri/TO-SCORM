@@ -25,6 +25,7 @@
 
   function start() {
     elements.courseTitle.textContent = content.title;
+    applyCourseTheme(content.themeProfile);
     global.scorm.init();
     state = restoreSavedState();
     bindEvents();
@@ -34,6 +35,19 @@
       slideId: content.slides[state.currentSlide].id,
       previewMode: global.scorm.isPreviewMode(),
     });
+  }
+
+  function applyCourseTheme(themeProfile) {
+    if (!themeProfile || !themeProfile.colors) {
+      return;
+    }
+    document.body.classList.add("course-runtime");
+    document.body.dataset.themeMotif = themeProfile.motif;
+    document.body.style.setProperty("--course-theme-primary", themeProfile.colors.primary);
+    document.body.style.setProperty("--course-theme-accent", themeProfile.colors.accent);
+    document.body.style.setProperty("--course-theme-background", themeProfile.colors.background);
+    document.body.style.setProperty("--course-theme-surface", themeProfile.colors.surface);
+    document.body.style.setProperty("--course-theme-text", themeProfile.colors.text);
   }
 
   function restoreSavedState() {
@@ -101,6 +115,12 @@
     }
 
     const fragment = document.createDocumentFragment();
+    if (state.currentSlide === 0 && content.themeProfile) {
+      const themeBadge = document.createElement("p");
+      themeBadge.className = "theme-badge";
+      themeBadge.textContent = content.themeProfile.name + " theme";
+      fragment.appendChild(themeBadge);
+    }
     const heading = document.createElement("h2");
     heading.textContent = slide.title;
     fragment.appendChild(heading);

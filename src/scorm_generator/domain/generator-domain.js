@@ -46,6 +46,7 @@
       description: normalized.description,
       generatedAt: normalized.generatedAt,
       lessonTheme: normalized.lessonTheme,
+      themeProfile: Object.freeze(createThemeProfile(normalized.lessonTheme)),
       title: normalized.title || titleCase(normalized.topic),
       passingScore: normalized.passingScore,
       slides: Object.freeze(
@@ -233,6 +234,61 @@
     ];
   }
 
+  function createThemeProfile(themeText) {
+    const normalized = themeText.toLowerCase();
+    const presets = [
+      {
+        match: /\b(university|college|campus|school|academic|alumni|student)\b/,
+        profile: createProfile("Academic", "crest", "#17315f", "#f5b82e", "#eef3fb", "#ffffff", "#162033"),
+      },
+      {
+        match: /\b(game|gaming|arcade|quest|rpg|level|player|esport)\b/,
+        profile: createProfile("Game", "level-up", "#211253", "#7cfc00", "#f2efff", "#ffffff", "#1c1534"),
+      },
+      {
+        match: /\b(health|medical|clinic|hospital|wellness|care)\b/,
+        profile: createProfile("Healthcare", "care", "#0f766e", "#67e8f9", "#ecfeff", "#ffffff", "#12333a"),
+      },
+      {
+        match: /\b(finance|bank|banking|investment|insurance|wealth)\b/,
+        profile: createProfile("Finance", "ledger", "#0f3d2e", "#d6b15f", "#f5f2e8", "#ffffff", "#18251f"),
+      },
+      {
+        match: /\b(sports|fitness|team|coach|athlete|stadium)\b/,
+        profile: createProfile("Sports", "scoreboard", "#123c69", "#ffb703", "#edf6ff", "#ffffff", "#102336"),
+      },
+      {
+        match: /\b(luxury|premium|executive|boutique|fashion)\b/,
+        profile: createProfile("Premium", "editorial", "#241a1f", "#d6a84f", "#f8f3ea", "#ffffff", "#241a1f"),
+      },
+    ];
+
+    const preset = presets.find((candidate) => candidate.match.test(normalized));
+    if (preset) {
+      return preset.profile;
+    }
+
+    const hue = hashString(themeText) % 360;
+    const primary = "hsl(" + hue + " 58% 32%)";
+    const accent = "hsl(" + ((hue + 42) % 360) + " 86% 58%)";
+    const background = "hsl(" + hue + " 44% 95%)";
+    return createProfile(titleCase(themeText), "custom", primary, accent, background, "#ffffff", "#172033");
+  }
+
+  function createProfile(name, motif, primary, accent, background, surface, text) {
+    return Object.freeze({
+      name,
+      motif,
+      colors: Object.freeze({
+        accent,
+        background,
+        primary,
+        surface,
+        text,
+      }),
+    });
+  }
+
   function parseObjectives(value) {
     if (Array.isArray(value)) {
       return value.map((item) => cleanText(item, 140)).filter(Boolean).slice(0, 8);
@@ -271,6 +327,12 @@
     return slug || "generated-course";
   }
 
+  function hashString(value) {
+    return Array.from(value).reduce((hash, character) => {
+      return (hash * 31 + character.charCodeAt(0)) >>> 0;
+    }, 17);
+  }
+
   function titleCase(value) {
     return value.replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
   }
@@ -285,6 +347,7 @@
   const api = {
     InvalidCourseRequestError,
     createCourse,
+    createThemeProfile,
     normalizeGenerationRequest,
     slugify,
   };
