@@ -18,18 +18,15 @@
       throw new Error("Theme profile generator is not available.");
     }
 
-    const response = await fetchImpl(normalizedUrl, {
-      cache: "no-store",
-      mode: "cors",
-    });
-    if (!response.ok) {
-      throw new Error("Theme URL returned HTTP " + response.status + ".");
-    }
-
-    const html = (await response.text()).slice(0, MAX_HTML_BYTES);
+    const fetched = await fetchThemeText(normalizedUrl, fetchImpl);
+    const html = fetched.text.slice(0, MAX_HTML_BYTES);
+    const linkedCss = fetched.kind === "html"
+      ? await fetchLinkedStylesheets(html, normalizedUrl, fetchImpl)
+      : "";
+    const sourceText = html + "\n" + linkedCss;
     const pageText = extractThemeText(html, normalizedUrl);
     const baseProfile = domain.createThemeProfile(pageText);
-    const colors = extractRankedHexColors(html);
+    const colors = extractRankedHexColors(sourceText);
     const importedProfile = {
       name: baseProfile.name === "Custom" ? "Imported" : baseProfile.name,
       motif: baseProfile.motif,
@@ -52,9 +49,85 @@
     logger.info("theme_url_extracted", {
       hostname: new URL(normalizedUrl).hostname,
       colorCount: colors.length,
+      sourceKind: fetched.kind,
       motif: safeProfile.motif,
     });
     return safeProfile;
+  }
+
+  async function fetchThemeText(url, fetchImpl) {
+    const candidates = createFetchCandidates(url, { includeReader: true });
+    const errors = [];
+    for (const candidate of candidates) {
+      try {
+        const response = await fetchImpl(candidate.url, {
+          cache: "no-store",
+          mode: "cors",
+        });
+        if (!response.ok) {
+          errors.push(candidate.label + " HTTP " + response.status);
+          continue;
+        }
+        return {
+          kind: candidate.kind,
+          text: await response.text(),
+        };
+      } catch (error) {
+        errors.push(candidate.label + " " + error.message);
+      }
+    }
+    throw new Error("Unable to fetch theme URL. " + errors.join("; "));
+  }
+
+  async function fetchLinkedStylesheets(html, baseUrl, fetchImpl) {
+    const links = extractStylesheetUrls(html, baseUrl).slice(0, 6);
+    const stylesheets = [];
+    for (const link of links) {
+      try {
+        const fetched = await fetchFromCandidates(createFetchCandidates(link, { includeReader: false }), fetchImpl);
+        stylesheets.push(fetched.slice(0, 50000));
+      } catch (_error) {
+        // Stylesheet extraction is best-effort; page HTML can still produce a usable theme.
+      }
+    }
+    return stylesheets.join("\n");
+  }
+
+  async function fetchFromCandidates(candidates, fetchImpl) {
+    for (const candidate of candidates) {
+      try {
+        const response = await fetchImpl(candidate.url, {
+          cache: "no-store",
+          mode: "cors",
+        });
+        if (response.ok) {
+          return response.text();
+        }
+      } catch (_error) {
+        // Try the next fetch strategy.
+      }
+    }
+    throw new Error("Unable to fetch any candidate.");
+  }
+
+  function createFetchCandidates(url, options) {
+    const config = options || {};
+    const candidates = [
+      { kind: "html", label: "direct", url },
+      {
+        kind: "html",
+        label: "allorigins",
+        url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+      },
+    ];
+    if (config.includeReader) {
+      candidates.push({
+        kind: "reader",
+        label: "jina-reader",
+        url: "https://r.jina.ai/http://r.jina.ai/http://" + url,
+      });
+    }
+    return candidates;
   }
 
   function normalizeHttpUrl(value) {
@@ -72,6 +145,7 @@
 
   function extractThemeText(html, url) {
     const title = extractFirstMatch(html, /<title[^>]*>([\s\S]*?)<\/title>/i);
+    const readerTitle = extractFirstMatch(html, /^Title:\s*(.+)$/im);
     const description = extractFirstMatch(
       html,
       /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["'][^>]*>/i,
@@ -81,7 +155,20 @@
       /<meta[^>]+property=["']og:site_name["'][^>]+content=["']([^"']+)["'][^>]*>/i,
     );
     const hostname = new URL(url).hostname.replace(/^www\./, "").replace(/\./g, " ");
-    return [title, description, ogSiteName, hostname].filter(Boolean).join(" ");
+    return [title, readerTitle, description, ogSiteName, hostname].filter(Boolean).join(" ");
+  }
+
+  function extractStylesheetUrls(html, baseUrl) {
+    return Array.from(html.matchAll(/<link[^>]+rel=["'][^"']*stylesheet[^"']*["'][^>]+href=["']([^"']+)["'][^>]*>/gi))
+      .map((match) => decodeEntities(match[1]))
+      .map((href) => {
+        try {
+          return new URL(href, baseUrl).href;
+        } catch (_error) {
+          return "";
+        }
+      })
+      .filter(Boolean);
   }
 
   function extractRankedHexColors(html) {
@@ -141,8 +228,10 @@
 
   const api = {
     extractRankedHexColors,
+    extractStylesheetUrls,
     extractThemeProfileFromUrl,
     extractThemeText,
+    fetchThemeText,
     normalizeHttpUrl,
   };
 
