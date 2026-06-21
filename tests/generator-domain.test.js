@@ -72,6 +72,35 @@ test("creates deterministic custom theme profiles", () => {
   assert.ok(["custom", "diagonal", "orbit", "wave", "circuit", "organic", "scoreboard"].includes(first.motif));
 });
 
+test("accepts only validated imported theme profiles", () => {
+  const imported = domain.normalizeThemeProfile({
+    name: "Imported Brand",
+    motif: "orbit",
+    colors: {
+      primary: "#123456",
+      accent: "#abcdef",
+      background: "#f0f6ff",
+      surface: "#ffffff",
+      text: "#172033",
+    },
+  });
+  const rejected = domain.normalizeThemeProfile({
+    name: "Bad",
+    motif: "orbit",
+    colors: {
+      primary: "url(javascript:alert(1))",
+      accent: "#abcdef",
+      background: "#f0f6ff",
+      surface: "#ffffff",
+      text: "#172033",
+    },
+  });
+
+  assert.equal(imported.name, "Imported Brand");
+  assert.equal(imported.motif, "orbit");
+  assert.equal(rejected, null);
+});
+
 test("rejects missing topic with a domain error", () => {
   assert.throws(
     () => domain.createCourse({ topic: "   " }),

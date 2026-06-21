@@ -5,7 +5,7 @@
   "description": "Static SCORM 1.2 app with in-browser course building, preview, and package export.",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "npm run test && node --check telemetry.js && node --check course-state.js && node --check scorm.js && node --check course.js && node --check src/scorm_generator/domain/generator-domain.js && node --check src/scorm_generator/application/generate-scorm-use-case.js && node --check src/scorm_generator/infrastructure/scorm-package-builder.js && node --check src/scorm_generator/interfaces/web/scorm-app.js"
+    "check": "npm run test && node --check telemetry.js && node --check course-state.js && node --check scorm.js && node --check course.js && node --check src/scorm_generator/domain/generator-domain.js && node --check src/scorm_generator/application/generate-scorm-use-case.js && node --check src/scorm_generator/infrastructure/scorm-package-builder.js && node --check src/scorm_generator/infrastructure/theme-url-extractor.js && node --check src/scorm_generator/interfaces/web/scorm-app.js"
   },
   "engines": {
     "node": ">=20"

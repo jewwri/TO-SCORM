@@ -28,6 +28,7 @@
       <file href="course.js" />
       <file href="src/scorm_generator/domain/generator-domain.js" />
       <file href="src/scorm_generator/application/generate-scorm-use-case.js" />
+      <file href="src/scorm_generator/infrastructure/theme-url-extractor.js" />
       <file href="src/scorm_generator/infrastructure/scorm-package-builder.js" />
       <file href="src/scorm_generator/interfaces/web/scorm-app.js" />
     </resource>

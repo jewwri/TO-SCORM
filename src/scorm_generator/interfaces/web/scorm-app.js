@@ -4,11 +4,14 @@
   const logger = global.Telemetry.createLogger("scorm-ui");
   const useCases = global.ScormGeneratorUseCases;
   const packageBuilder = global.ScormPackageBuilder;
+  const themeUrlExtractor = global.ThemeUrlExtractor;
   const domain = global.ScormGeneratorDomain;
 
   const elements = {};
   let currentCourse = null;
   let currentPackageUrl = "";
+  let generationSequence = 0;
+  let themeUrlCache = { profile: null, url: "" };
 
   function start() {
     try {
@@ -28,6 +31,7 @@
       "topic",
       "title",
       "lessonTheme",
+      "themeUrl",
       "audience",
       "description",
       "learningObjectives",
@@ -65,13 +69,16 @@
   }
 
   function generateFromForm() {
+    const sequence = (generationSequence += 1);
     try {
-      const result = useCases.generateScormCourse(readFormInput(), { logger });
+      const input = readFormInput();
+      const result = useCases.generateScormCourse(input, { logger });
       currentCourse = result.course;
       renderSummary(result.summary);
       renderPreview(result.course);
       elements.downloadPackage.disabled = false;
       setStatus("Preview updated. Export the SCORM you built when ready.");
+      maybeLoadThemeUrl(input.themeUrl, sequence);
     } catch (error) {
       if (error instanceof domain.InvalidCourseRequestError) {
         currentCourse = null;
@@ -96,10 +103,54 @@
       passingScore: elements.passingScore.value,
       questionCount: elements.questionCount.value,
       slideCount: elements.slideCount.value,
+      themeProfile: getCachedThemeProfile(),
+      themeUrl: normalizeThemeUrlInput(elements.themeUrl.value),
       title: elements.title.value,
       tone: elements.tone.value,
       topic: elements.topic.value,
     };
+  }
+
+  function getCachedThemeProfile() {
+    const themeUrl = normalizeThemeUrlInput(elements.themeUrl.value);
+    if (themeUrl && themeUrlCache.url === themeUrl) {
+      return themeUrlCache.profile;
+    }
+    return null;
+  }
+
+  async function maybeLoadThemeUrl(themeUrl, sequence) {
+    if (!themeUrl || (themeUrlCache.url === themeUrl && themeUrlCache.profile)) {
+      return;
+    }
+    if (!themeUrlExtractor || typeof themeUrlExtractor.extractThemeProfileFromUrl !== "function") {
+      setStatus("Theme URL extraction is unavailable. Using the typed visual theme.");
+      return;
+    }
+
+    setStatus("Preview updated. Pulling theme from URL...");
+    try {
+      const profile = await themeUrlExtractor.extractThemeProfileFromUrl(themeUrl, {
+        domain,
+        logger,
+      });
+      if (sequence !== generationSequence || normalizeThemeUrlInput(elements.themeUrl.value) !== themeUrl) {
+        return;
+      }
+      themeUrlCache = { profile, url: themeUrl };
+      const result = useCases.generateScormCourse(readFormInput(), { logger });
+      currentCourse = result.course;
+      renderSummary(result.summary);
+      renderPreview(result.course);
+      setStatus("Preview updated with the theme pulled from the URL.");
+    } catch (error) {
+      if (sequence !== generationSequence) {
+        return;
+      }
+      themeUrlCache = { profile: null, url: "" };
+      logger.warn("theme_url_extract_failed", { message: error.message });
+      setStatus("Could not pull that URL theme. Using the typed visual theme.");
+    }
   }
 
   function renderSummary(summary) {
@@ -301,6 +352,10 @@
 
   function setStatus(message) {
     elements.statusMessage.textContent = message;
+  }
+
+  function normalizeThemeUrlInput(value) {
+    return typeof value === "string" ? value.trim() : "";
   }
 
   function renderFatalStartupError(error) {

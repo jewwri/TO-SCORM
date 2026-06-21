@@ -8,7 +8,7 @@ This repository contains a browser-based SCORM app. A user provides a topic, vis
 
 - Generate a draft lesson from explicit user inputs.
 - Preview generated slides and quiz questions directly in the app.
-- Iterate on topic, visual theme, objectives, duration, slide count, question count, and passing score.
+- Iterate on topic, visual theme, optional public theme URL, objectives, duration, slide count, question count, and passing score.
 - Export a SCORM 1.2 package with `imsmanifest.xml`, learner runtime assets, content, scoring, and LMS progress reporting.
 - Run unit, architecture, and package tests without external services.
 
@@ -51,7 +51,7 @@ flowchart LR
 - Slide: instructional content blocks or a quiz marker.
 - ContentBlock: paragraph, list, tile group, or callout.
 - Question: prompt, answer options, correct answer, and rationale.
-- ThemeProfile: generated visual palette and motif derived from user theme text.
+- ThemeProfile: generated visual palette and motif derived from user theme text or validated colors/metadata extracted from a public theme URL.
 
 ## Major Workflows
 
@@ -61,6 +61,7 @@ flowchart LR
 2. The application use case calls the pure domain generator.
 3. Domain validation rejects missing topics and clamps bounded numeric settings.
 4. The UI renders summary metadata and preview slides using DOM APIs.
+5. If a theme URL is supplied, the infrastructure extractor attempts a browser fetch, extracts page metadata and CSS colors, validates the resulting profile, and re-renders the preview. If the fetch fails because of CORS or network policy, the typed theme remains active.
 
 ### Export SCORM
 
@@ -94,6 +95,7 @@ flowchart LR
 
 - The first version uses deterministic templates, not an LLM or external content provider.
 - Browser export requires serving over HTTP because runtime assets are fetched before packaging.
+- Theme URL extraction depends on the target site allowing browser CORS requests. A backend theme-fetch provider can replace this adapter later for broader site coverage.
 - Generated ZIP entries are stored, not compressed. Package sizes are still small for microlearning output.
 - LMS compatibility should be smoke-tested in the target LMS because SCORM shells vary.
 - Generated course artifacts are not committed to the repository; `course-content.js` exists only inside exported packages.

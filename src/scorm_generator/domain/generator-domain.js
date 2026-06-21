@@ -53,6 +53,8 @@
 
   function createCourse(request) {
     const normalized = normalizeGenerationRequest(request);
+    const themeProfile = normalizeThemeProfile(request && request.themeProfile) ||
+      createThemeProfile(normalized.lessonTheme);
     const objectives = normalized.learningObjectives.length > 0
       ? normalized.learningObjectives
       : createDefaultObjectives(normalized.topic);
@@ -77,7 +79,7 @@
       courseId: lessonId,
       description: normalized.description,
       generatedAt: normalized.generatedAt,
-      themeProfile: Object.freeze(createThemeProfile(normalized.lessonTheme)),
+      themeProfile: Object.freeze(themeProfile),
       title: normalized.title || titleCase(normalized.topic),
       passingScore: normalized.passingScore,
       slides: Object.freeze(
@@ -338,6 +340,60 @@
     });
   }
 
+  function normalizeThemeProfile(value) {
+    if (!value || typeof value !== "object" || !value.colors || typeof value.colors !== "object") {
+      return null;
+    }
+    const name = cleanText(value.name, 60) || "Imported";
+    const motif = sanitizeMotif(value.motif);
+    const colors = value.colors;
+    const primary = sanitizeCssColor(colors.primary);
+    const accent = sanitizeCssColor(colors.accent);
+    const background = sanitizeCssColor(colors.background);
+    const surface = sanitizeCssColor(colors.surface);
+    const text = sanitizeCssColor(colors.text);
+
+    if (!primary || !accent || !background || !surface || !text) {
+      return null;
+    }
+    return createProfile(name, motif, primary, accent, background, surface, text);
+  }
+
+  function sanitizeMotif(value) {
+    const allowed = new Set([
+      "care",
+      "circuit",
+      "crest",
+      "custom",
+      "diagonal",
+      "editorial",
+      "ledger",
+      "level-up",
+      "maze",
+      "organic",
+      "orbit",
+      "playful",
+      "quest",
+      "scoreboard",
+      "wave",
+    ]);
+    return allowed.has(value) ? value : "custom";
+  }
+
+  function sanitizeCssColor(value) {
+    if (typeof value !== "string") {
+      return "";
+    }
+    const color = value.trim();
+    if (/^#[0-9a-f]{6}$/i.test(color)) {
+      return color.toLowerCase();
+    }
+    if (/^hsl\(\d{1,3} \d{1,3}% \d{1,3}%\)$/i.test(color)) {
+      return color;
+    }
+    return "";
+  }
+
   function parseObjectives(value) {
     if (Array.isArray(value)) {
       return value.map((item) => cleanText(item, 140)).filter(Boolean).slice(0, 8);
@@ -398,6 +454,7 @@
     createCourse,
     createThemeProfile,
     normalizeGenerationRequest,
+    normalizeThemeProfile,
     slugify,
   };
 
