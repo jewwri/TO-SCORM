@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{COURSE_TITLE}}</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero" aria-labelledby="courseTitle">
+      <div>
+        <p class="eyebrow">SCORM 1.2 Microlearning</p>
+        <h1 id="courseTitle">{{COURSE_TITLE}}</h1>
+        <p class="subtitle">{{COURSE_DESCRIPTION}}</p>
+      </div>
+      <div class="progress-wrap" aria-live="polite">
+        <span id="courseStatus">Slide 1</span>
+        <span id="progressLabel">0%</span>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="progressBar"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="slide" class="card" aria-live="polite"></section>
+
+    <nav class="controls" aria-label="Course navigation">
+      <button id="prevBtn" type="button">Back</button>
+      <button id="nextBtn" type="button">Next</button>
+    </nav>
+  </main>
+  <script src="telemetry.js"></script>
+  <script src="course-content.js"></script>
+  <script src="course-state.js"></script>
+  <script src="scorm.js"></script>
+  <script src="course.js"></script>
+</body>
+</html>

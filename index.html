@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SCORM</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand-lockup" aria-label="SCORM">
+        <span class="brand-mark">S</span>
+        <span>SCORM</span>
+      </div>
+      <div class="app-header-content">
+        <div>
+          <p class="eyebrow">SCORM Automation</p>
+          <h1>Build lessons that ship.</h1>
+          <p class="subtitle">Enter a topic, lesson theme, and learner details to build a SCORM 1.2 microlearning package with an editable preview.</p>
+        </div>
+        <button id="downloadPackage" type="button" disabled>Export Built SCORM</button>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="browser-body">
+            <div class="browser-line wide"></div>
+            <div class="browser-line"></div>
+            <div class="browser-panel">
+              <div class="play-mark"></div>
+            </div>
+            <div class="browser-cards">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="generator-layout" aria-label="SCORM generator workspace">
+      <form id="generatorForm" class="generator-panel" aria-label="Lesson details">
+        <div class="field">
+          <label for="topic">Topic</label>
+          <input id="topic" name="topic" type="text" required value="Incident response basics" />
+        </div>
+
+        <div class="field">
+          <label for="title">Course title</label>
+          <input id="title" name="title" type="text" value="Incident Response Basics" />
+        </div>
+
+        <div class="field">
+          <label for="lessonTheme">Lesson theme</label>
+          <input id="lessonTheme" name="lessonTheme" type="text" value="security operations tabletop exercise" />
+        </div>
+
+        <div class="field">
+          <label for="audience">Audience</label>
+          <input id="audience" name="audience" type="text" value="new support engineers" />
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="3">A short lesson that helps support engineers identify, communicate, and escalate incidents consistently.</textarea>
+        </div>
+
+        <div class="field">
+          <label for="learningObjectives">Learning objectives</label>
+          <textarea id="learningObjectives" name="learningObjectives" rows="5">Identify signals that may indicate an incident
+Classify incident urgency using business impact
+Escalate with clear context and next actions</textarea>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="durationMinutes">Minutes</label>
+            <input id="durationMinutes" name="durationMinutes" type="number" min="3" max="60" value="12" />
+          </div>
+
+          <div class="field">
+            <label for="slideCount">Slides</label>
+            <input id="slideCount" name="slideCount" type="number" min="4" max="8" value="5" />
+          </div>
+
+          <div class="field">
+            <label for="questionCount">Questions</label>
+            <input id="questionCount" name="questionCount" type="number" min="2" max="6" value="3" />
+          </div>
+
+          <div class="field">
+            <label for="passingScore">Pass %</label>
+            <input id="passingScore" name="passingScore" type="number" min="50" max="100" value="80" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="tone">Tone</label>
+          <input id="tone" name="tone" type="text" value="clear and action-oriented" />
+        </div>
+
+        <button type="submit">Regenerate Preview</button>
+      </form>
+
+      <section class="preview-panel" aria-labelledby="previewTitle">
+        <div class="preview-toolbar">
+          <div>
+            <h2 id="previewTitle">Generated Lesson</h2>
+            <p id="statusMessage" role="status" aria-live="polite"></p>
+          </div>
+          <dl id="summary" class="summary-grid"></dl>
+        </div>
+        <div id="preview" class="course-preview" aria-live="polite"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="telemetry.js"></script>
+  <script src="src/scorm_generator/domain/generator-domain.js"></script>
+  <script src="src/scorm_generator/application/generate-scorm-use-case.js"></script>
+  <script src="src/scorm_generator/infrastructure/scorm-package-builder.js"></script>
+  <script src="src/scorm_generator/interfaces/web/scorm-app.js"></script>
+</body>
+</html>
