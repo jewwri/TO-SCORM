@@ -575,9 +575,88 @@ textarea {
     var(--course-theme-background, #070b18);
 }
 
+.course-preview[data-theme-motif="orbit"] {
+  background:
+    radial-gradient(circle at 20% 22%, var(--course-theme-accent, #38bdf8) 0 5px, transparent 6px),
+    radial-gradient(circle at 72% 34%, color-mix(in srgb, var(--course-theme-primary, #111827) 28%, transparent) 0 90px, transparent 92px),
+    radial-gradient(circle at 70% 34%, transparent 0 118px, color-mix(in srgb, var(--course-theme-accent, #38bdf8) 32%, transparent) 119px 121px, transparent 122px),
+    var(--course-theme-background, #eaf6ff);
+}
+
+.course-preview[data-theme-motif="wave"] {
+  background:
+    radial-gradient(ellipse at 20% -10%, color-mix(in srgb, var(--course-theme-accent, #22d3ee) 28%, transparent) 0 36%, transparent 38%),
+    radial-gradient(ellipse at 80% 0%, color-mix(in srgb, var(--course-theme-primary, #075985) 18%, transparent) 0 32%, transparent 34%),
+    var(--course-theme-background, #ecfeff);
+}
+
+.course-preview[data-theme-motif="circuit"] {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--course-theme-accent, #22c55e) 26%, transparent) 1px, transparent 1px) 0 0 / 46px 46px,
+    linear-gradient(0deg, color-mix(in srgb, var(--course-theme-accent, #22c55e) 16%, transparent) 1px, transparent 1px) 0 0 / 46px 46px,
+    var(--course-theme-background, #ecfdf5);
+}
+
+.course-preview[data-theme-motif="organic"] {
+  background:
+    radial-gradient(ellipse at 14% 18%, color-mix(in srgb, var(--course-theme-accent, #84cc16) 30%, transparent) 0 90px, transparent 92px),
+    radial-gradient(ellipse at 86% 8%, color-mix(in srgb, var(--course-theme-primary, #166534) 16%, transparent) 0 120px, transparent 122px),
+    var(--course-theme-background, #f0fdf4);
+}
+
+.course-preview[data-theme-motif="scoreboard"] {
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--course-theme-primary, #123c69) 12%, transparent) 0 12px, transparent 12px 34px),
+    var(--course-theme-background, #edf6ff);
+}
+
+.course-preview[data-theme-motif="crest"],
+.course-preview[data-theme-motif="ledger"],
+.course-preview[data-theme-motif="editorial"],
+.course-preview[data-theme-motif="diagonal"],
+.course-preview[data-theme-motif="quest"],
+.course-preview[data-theme-motif="playful"] {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--course-theme-primary, #263640) 12%, transparent) 0 22%, transparent 22% 100%),
+    linear-gradient(45deg, color-mix(in srgb, var(--course-theme-accent, #ffd24a) 18%, transparent) 0 14%, transparent 14% 100%),
+    var(--course-theme-background, #f7f8fb);
+}
+
 .preview-slide[data-motif="maze"] {
   border-color: color-mix(in srgb, var(--course-theme-primary, #2563eb) 55%, black);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--course-theme-accent, #ffd400) 18%, transparent);
+}
+
+.preview-slide[data-motif="orbit"]::after {
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, var(--course-theme-accent, #38bdf8) 0 36%, transparent 38%),
+    conic-gradient(transparent 0 42%, var(--course-theme-primary, #111827) 42% 48%, transparent 48% 100%);
+  opacity: 0.72;
+}
+
+.preview-slide[data-motif="wave"]::after {
+  border-radius: 999px 999px 8px 8px;
+  background: linear-gradient(135deg, var(--course-theme-primary, #075985), var(--course-theme-accent, #22d3ee));
+  opacity: 0.28;
+}
+
+.preview-slide[data-motif="circuit"]::after {
+  border-radius: 3px;
+  background:
+    linear-gradient(90deg, var(--course-theme-accent, #22c55e) 2px, transparent 2px) 0 0 / 12px 12px,
+    linear-gradient(0deg, var(--course-theme-primary, #0f172a) 2px, transparent 2px) 0 0 / 12px 12px;
+  opacity: 0.32;
+}
+
+.preview-slide[data-motif="organic"]::after {
+  border-radius: 65% 35% 60% 40%;
+}
+
+.preview-slide[data-motif="scoreboard"]::after {
+  border-radius: 3px;
+  background: repeating-linear-gradient(90deg, var(--course-theme-primary, #123c69) 0 8px, var(--course-theme-accent, #ffb703) 8px 16px);
+  opacity: 0.24;
 }
 
 .preview-slide[data-motif="maze"]::after {

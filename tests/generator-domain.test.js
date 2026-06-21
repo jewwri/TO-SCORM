@@ -25,12 +25,20 @@ test("creates a course from lesson details", () => {
 test("maps game themes into a visual course profile", () => {
   const course = domain.createCourse({
     topic: "Secure passwords",
-    lessonTheme: "retro game quest",
+    lessonTheme: "esport player training",
   });
 
   assert.equal(course.themeProfile.name, "Game");
   assert.equal(course.themeProfile.motif, "level-up");
   assert.equal(course.themeProfile.colors.accent, "#7cfc00");
+});
+
+test("uses named colors when they appear in a theme", () => {
+  const profile = domain.createThemeProfile("red and yellow university theme");
+
+  assert.equal(profile.name, "Academic");
+  assert.equal(profile.colors.primary, "#dc2626");
+  assert.equal(profile.colors.accent, "#facc15");
 });
 
 test("maps pacman themes into an arcade visual profile", () => {
@@ -47,13 +55,21 @@ test("maps pacman themes into an arcade visual profile", () => {
   assert.doesNotMatch(visibleCopy, /pacman/i);
 });
 
+test("maps broad non-game theme families", () => {
+  assert.equal(domain.createThemeProfile("space academy").motif, "orbit");
+  assert.equal(domain.createThemeProfile("ocean safety").motif, "wave");
+  assert.equal(domain.createThemeProfile("cyber range").motif, "circuit");
+  assert.equal(domain.createThemeProfile("forest compliance").motif, "organic");
+});
+
 test("creates deterministic custom theme profiles", () => {
   const first = domain.createThemeProfile("desert robotics lab");
   const second = domain.createThemeProfile("desert robotics lab");
 
   assert.deepEqual(first, second);
-  assert.equal(first.name, "Desert Robotics Lab");
+  assert.equal(first.name, "Custom");
   assert.match(first.colors.primary, /^hsl\(/);
+  assert.ok(["custom", "diagonal", "orbit", "wave", "circuit", "organic", "scoreboard"].includes(first.motif));
 });
 
 test("rejects missing topic with a domain error", () => {

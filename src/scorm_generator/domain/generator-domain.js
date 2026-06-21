@@ -11,6 +11,38 @@
     tone: "clear and practical",
   });
 
+  const THEME_FAMILIES = Object.freeze([
+    createFamily("Arcade", "maze", /\b(pacman|pac-man|arcade|maze|8-bit|pixel|retro)\b/, "#2563eb", "#ffd400", "#070b18", "#111827", "#f8fafc"),
+    createFamily("Academic", "crest", /\b(university|college|campus|school|academic|alumni|student|faculty|ivy)\b/, "#17315f", "#f5b82e", "#eef3fb", "#ffffff", "#162033"),
+    createFamily("Game", "level-up", /\b(game|gaming|level|player|esport|esports|controller)\b/, "#211253", "#7cfc00", "#f2efff", "#ffffff", "#1c1534"),
+    createFamily("Fantasy", "quest", /\b(fantasy|dragon|wizard|magic|kingdom|castle|quest|myth)\b/, "#4c1d95", "#f59e0b", "#f4efff", "#ffffff", "#211436"),
+    createFamily("Space", "orbit", /\b(space|galaxy|planet|orbit|astronaut|cosmic|nasa|star)\b/, "#111827", "#38bdf8", "#eaf6ff", "#ffffff", "#111827"),
+    createFamily("Ocean", "wave", /\b(ocean|sea|marine|beach|coastal|surf|water|navy)\b/, "#075985", "#22d3ee", "#ecfeff", "#ffffff", "#12313f"),
+    createFamily("Nature", "organic", /\b(nature|forest|garden|botanical|eco|green|sustainability|outdoor)\b/, "#166534", "#84cc16", "#f0fdf4", "#ffffff", "#17331d"),
+    createFamily("Cyber", "circuit", /\b(cyber|hacker|matrix|neon|ai|robot|sci-fi|technology|tech)\b/, "#0f172a", "#22c55e", "#ecfdf5", "#ffffff", "#0f172a"),
+    createFamily("Sports", "scoreboard", /\b(sports|fitness|team|coach|athlete|stadium|league)\b/, "#123c69", "#ffb703", "#edf6ff", "#ffffff", "#102336"),
+    createFamily("Healthcare", "care", /\b(health|medical|clinic|hospital|wellness|care|patient)\b/, "#0f766e", "#67e8f9", "#ecfeff", "#ffffff", "#12333a"),
+    createFamily("Finance", "ledger", /\b(finance|bank|banking|investment|insurance|wealth|money)\b/, "#0f3d2e", "#d6b15f", "#f5f2e8", "#ffffff", "#18251f"),
+    createFamily("Premium", "editorial", /\b(luxury|premium|executive|boutique|fashion|minimal|black tie)\b/, "#241a1f", "#d6a84f", "#f8f3ea", "#ffffff", "#241a1f"),
+    createFamily("Kids", "playful", /\b(kids|children|playground|toy|cartoon|comic|fun)\b/, "#7c3aed", "#facc15", "#fef3c7", "#ffffff", "#2e1065"),
+  ]);
+
+  const NAMED_COLORS = Object.freeze({
+    black: "#111827",
+    blue: "#2563eb",
+    brown: "#7c2d12",
+    gold: "#d6a84f",
+    green: "#16a34a",
+    navy: "#17315f",
+    orange: "#f97316",
+    pink: "#db2777",
+    purple: "#7c3aed",
+    red: "#dc2626",
+    teal: "#0d9488",
+    white: "#ffffff",
+    yellow: "#facc15",
+  });
+
   class InvalidCourseRequestError extends Error {
     constructor(message, details) {
       super(message);
@@ -233,47 +265,63 @@
 
   function createThemeProfile(themeText) {
     const normalized = themeText.toLowerCase();
-    const presets = [
-      {
-        match: /\b(pacman|pac-man|arcade|maze|8-bit|pixel)\b/,
-        profile: createProfile("Arcade", "maze", "#2563eb", "#ffd400", "#070b18", "#111827", "#f8fafc"),
-      },
-      {
-        match: /\b(university|college|campus|school|academic|alumni|student)\b/,
-        profile: createProfile("Academic", "crest", "#17315f", "#f5b82e", "#eef3fb", "#ffffff", "#162033"),
-      },
-      {
-        match: /\b(game|gaming|quest|rpg|level|player|esport)\b/,
-        profile: createProfile("Game", "level-up", "#211253", "#7cfc00", "#f2efff", "#ffffff", "#1c1534"),
-      },
-      {
-        match: /\b(health|medical|clinic|hospital|wellness|care)\b/,
-        profile: createProfile("Healthcare", "care", "#0f766e", "#67e8f9", "#ecfeff", "#ffffff", "#12333a"),
-      },
-      {
-        match: /\b(finance|bank|banking|investment|insurance|wealth)\b/,
-        profile: createProfile("Finance", "ledger", "#0f3d2e", "#d6b15f", "#f5f2e8", "#ffffff", "#18251f"),
-      },
-      {
-        match: /\b(sports|fitness|team|coach|athlete|stadium)\b/,
-        profile: createProfile("Sports", "scoreboard", "#123c69", "#ffb703", "#edf6ff", "#ffffff", "#102336"),
-      },
-      {
-        match: /\b(luxury|premium|executive|boutique|fashion)\b/,
-        profile: createProfile("Premium", "editorial", "#241a1f", "#d6a84f", "#f8f3ea", "#ffffff", "#241a1f"),
-      },
-    ];
-
-    const preset = presets.find((candidate) => candidate.match.test(normalized));
-    if (preset) {
-      return preset.profile;
+    const explicitColors = extractNamedColors(normalized);
+    const family = THEME_FAMILIES.find((candidate) => candidate.match.test(normalized));
+    if (family) {
+      return familyToProfile(family, explicitColors);
     }
 
+    const motifs = ["custom", "diagonal", "orbit", "wave", "circuit", "organic", "scoreboard"];
     const hue = hashString(themeText) % 360;
+    const motif = motifs[hashString(themeText + ":motif") % motifs.length];
     const primary = "hsl(" + hue + " 58% 32%)";
     const accent = "hsl(" + ((hue + 42) % 360) + " 86% 58%)";
     const background = "hsl(" + hue + " 44% 95%)";
-    return createProfile(titleCase(themeText), "custom", primary, accent, background, "#ffffff", "#172033");
+    return createProfile(
+      "Custom",
+      motif,
+      explicitColors[0] || primary,
+      explicitColors[1] || accent,
+      background,
+      "#ffffff",
+      "#172033",
+    );
+  }
+
+  function createFamily(name, motif, match, primary, accent, background, surface, text) {
+    return Object.freeze({
+      name,
+      motif,
+      match,
+      colors: Object.freeze({
+        accent,
+        background,
+        primary,
+        surface,
+        text,
+      }),
+    });
+  }
+
+  function familyToProfile(family, explicitColors) {
+    const primary = explicitColors[0] || family.colors.primary;
+    const accent = explicitColors[1] || family.colors.accent;
+    return createProfile(
+      family.name,
+      family.motif,
+      primary,
+      accent,
+      family.colors.background,
+      family.colors.surface,
+      family.colors.text,
+    );
+  }
+
+  function extractNamedColors(value) {
+    return Object.entries(NAMED_COLORS)
+      .filter(([name]) => new RegExp("\\b" + name + "\\b").test(value))
+      .map((entry) => entry[1])
+      .slice(0, 2);
   }
 
   function createProfile(name, motif, primary, accent, background, surface, text) {
