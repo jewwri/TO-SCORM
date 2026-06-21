@@ -33,6 +33,20 @@ test("maps game themes into a visual course profile", () => {
   assert.equal(course.themeProfile.colors.accent, "#7cfc00");
 });
 
+test("maps pacman themes into an arcade visual profile", () => {
+  const course = domain.createCourse({
+    topic: "CICD",
+    title: "Learn CICD",
+    lessonTheme: "pacman",
+  });
+  const visibleCopy = JSON.stringify(course.slides);
+
+  assert.equal(course.themeProfile.name, "Arcade");
+  assert.equal(course.themeProfile.motif, "maze");
+  assert.equal(course.themeProfile.colors.accent, "#ffd400");
+  assert.doesNotMatch(visibleCopy, /pacman/i);
+});
+
 test("creates deterministic custom theme profiles", () => {
   const first = domain.createThemeProfile("desert robotics lab");
   const second = domain.createThemeProfile("desert robotics lab");

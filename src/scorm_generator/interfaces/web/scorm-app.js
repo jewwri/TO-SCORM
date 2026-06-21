@@ -132,18 +132,13 @@
     title.textContent = course.title;
     const details = document.createElement("p");
     details.textContent =
-      course.lessonTheme +
-      " | " +
       course.slides.length +
       " slides | " +
       course.questions.length +
       " questions | passing score " +
       course.passingScore +
       "%";
-    const themeBadge = document.createElement("span");
-    themeBadge.className = "theme-badge";
-    themeBadge.textContent = course.themeProfile.name + " theme";
-    header.append(themeBadge, title, details);
+    header.append(title, details);
     elements.preview.appendChild(header);
 
     course.slides.forEach((slide, index) => {

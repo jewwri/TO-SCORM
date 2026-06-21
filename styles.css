@@ -505,21 +505,6 @@ textarea {
   opacity: 0.16;
 }
 
-.theme-badge {
-  display: inline-flex;
-  width: fit-content;
-  margin: 0 0 12px;
-  padding: 6px 10px;
-  border: 1px solid color-mix(in srgb, var(--course-theme-primary, var(--color-primary)) 30%, white);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--course-theme-accent, var(--color-accent)) 24%, white);
-  color: var(--course-theme-primary, var(--color-primary-dark));
-  font-size: 12px;
-  font-weight: 900;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
 .preview-grid,
 .grid {
   display: grid;
@@ -532,10 +517,10 @@ textarea {
 .tile {
   min-height: 116px;
   padding: 16px;
-  border: 1px solid var(--color-line);
+  border: 1px solid color-mix(in srgb, var(--course-theme-primary, var(--color-line)) 22%, var(--color-line));
   border-top: 4px solid var(--course-theme-accent, var(--color-accent));
   border-radius: 8px;
-  background: #fffaf5;
+  background: color-mix(in srgb, var(--course-theme-surface, #fffaf5) 92%, var(--course-theme-accent, var(--color-accent)));
 }
 
 .preview-grid strong,
@@ -549,9 +534,17 @@ textarea {
 .preview-grid span,
 .tile span {
   display: block;
-  color: #334155;
+  color: color-mix(in srgb, var(--course-theme-text, #334155) 86%, var(--course-theme-surface, white));
   font-size: 16px;
   line-height: 1.5;
+}
+
+.preview-slide p,
+.preview-slide li,
+.preview-question li,
+.course-runtime .card p,
+.course-runtime .card li {
+  color: color-mix(in srgb, var(--course-theme-text, #334155) 88%, var(--course-theme-surface, white));
 }
 
 .preview-callout,
@@ -569,9 +562,30 @@ textarea {
 .preview-question {
   margin-top: 14px;
   padding: 14px;
-  border: 1px solid var(--color-line);
+  border: 1px solid color-mix(in srgb, var(--course-theme-primary, var(--color-line)) 20%, var(--color-line));
   border-radius: 8px;
-  background: #f8fafc;
+  background: color-mix(in srgb, var(--course-theme-surface, #f8fafc) 94%, white);
+}
+
+.course-preview[data-theme-motif="maze"] {
+  background:
+    radial-gradient(circle at 18px 18px, var(--course-theme-accent, #ffd400) 0 4px, transparent 5px) 0 0 / 42px 42px,
+    linear-gradient(90deg, color-mix(in srgb, var(--course-theme-primary, #2563eb) 28%, transparent) 1px, transparent 1px) 0 0 / 84px 84px,
+    linear-gradient(0deg, color-mix(in srgb, var(--course-theme-primary, #2563eb) 28%, transparent) 1px, transparent 1px) 0 0 / 84px 84px,
+    var(--course-theme-background, #070b18);
+}
+
+.preview-slide[data-motif="maze"] {
+  border-color: color-mix(in srgb, var(--course-theme-primary, #2563eb) 55%, black);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--course-theme-accent, #ffd400) 18%, transparent);
+}
+
+.preview-slide[data-motif="maze"]::after {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: conic-gradient(from 34deg, transparent 0 74deg, var(--course-theme-accent, #ffd400) 74deg 360deg);
+  opacity: 0.9;
 }
 
 .shell {
@@ -707,6 +721,13 @@ textarea {
 .course-runtime .card {
   border-top: 5px solid var(--course-theme-primary, var(--color-primary));
   background: var(--course-theme-surface, white);
+}
+
+.course-runtime[data-theme-motif="maze"] .card {
+  border-color: color-mix(in srgb, var(--course-theme-primary, #2563eb) 65%, black);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--course-theme-accent, #ffd400) 18%, transparent),
+    var(--shadow-panel);
 }
 
 .course-runtime h2,

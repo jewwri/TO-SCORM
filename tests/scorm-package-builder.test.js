@@ -44,6 +44,21 @@ test("export package replaces static content with the course the user built", ()
   assert.doesNotMatch(scormPackage.files["course-content.js"], /CI\/CD Foundations/);
 });
 
+test("export package keeps raw theme input out of visible course copy", () => {
+  const course = domain.createCourse({
+    topic: "CICD",
+    title: "Learn CICD",
+    lessonTheme: "pacman",
+  });
+  const scormPackage = packageBuilder.createScormPackage(course, {
+    ...createRuntimeFiles(),
+  });
+
+  assert.match(scormPackage.files["course-content.js"], /themeProfile/);
+  assert.doesNotMatch(scormPackage.files["course-content.js"], /lessonTheme/);
+  assert.doesNotMatch(scormPackage.files["course-content.js"], /pacman/i);
+});
+
 test("export package personalizes course html metadata", () => {
   const course = domain.createCourse({
     topic: "Fall prevention",

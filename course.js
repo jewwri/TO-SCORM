@@ -115,12 +115,6 @@
     }
 
     const fragment = document.createDocumentFragment();
-    if (state.currentSlide === 0 && content.themeProfile) {
-      const themeBadge = document.createElement("p");
-      themeBadge.className = "theme-badge";
-      themeBadge.textContent = content.themeProfile.name + " theme";
-      fragment.appendChild(themeBadge);
-    }
     const heading = document.createElement("h2");
     heading.textContent = slide.title;
     fragment.appendChild(heading);

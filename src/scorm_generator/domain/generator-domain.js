@@ -45,7 +45,6 @@
       courseId: lessonId,
       description: normalized.description,
       generatedAt: normalized.generatedAt,
-      lessonTheme: normalized.lessonTheme,
       themeProfile: Object.freeze(createThemeProfile(normalized.lessonTheme)),
       title: normalized.title || titleCase(normalized.topic),
       passingScore: normalized.passingScore,
@@ -93,9 +92,7 @@
             request.topic +
             " for " +
             request.audience +
-            " using a " +
-            request.lessonTheme +
-            " theme.",
+            ".",
         },
         {
           type: "list",
@@ -238,11 +235,15 @@
     const normalized = themeText.toLowerCase();
     const presets = [
       {
+        match: /\b(pacman|pac-man|arcade|maze|8-bit|pixel)\b/,
+        profile: createProfile("Arcade", "maze", "#2563eb", "#ffd400", "#070b18", "#111827", "#f8fafc"),
+      },
+      {
         match: /\b(university|college|campus|school|academic|alumni|student)\b/,
         profile: createProfile("Academic", "crest", "#17315f", "#f5b82e", "#eef3fb", "#ffffff", "#162033"),
       },
       {
-        match: /\b(game|gaming|arcade|quest|rpg|level|player|esport)\b/,
+        match: /\b(game|gaming|quest|rpg|level|player|esport)\b/,
         profile: createProfile("Game", "level-up", "#211253", "#7cfc00", "#f2efff", "#ffffff", "#1c1534"),
       },
       {
